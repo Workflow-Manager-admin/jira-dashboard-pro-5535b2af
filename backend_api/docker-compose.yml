@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  backend_api:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - LOG_LEVEL=INFO
+      - ALLOWED_ORIGINS=http://localhost:3000,https://localhost:3000
+    volumes:
+      - ./.env:/app/.env:ro
+      - ./src:/app/src:ro
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "health_check.py", "--quiet"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+# Development override
+# Use: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+  backend_api_dev:
+    extends:
+      service: backend_api
+    volumes:
+      - ./src:/app/src
+    environment:
+      - ENVIRONMENT=development
+      - DEBUG=true
+      - LOG_LEVEL=DEBUG
+    command: ["python", "start.py"]

@@ -1,7 +1,11 @@
 import json
 import os
+import sys
 
-from src.api.main import app
+# Add the src directory to Python path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
+
+from api.main import app
 
 # Get the OpenAPI schema
 openapi_schema = app.openapi()
